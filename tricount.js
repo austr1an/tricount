@@ -348,7 +348,7 @@ function renderEditEntry(id) {
 
     let entry = entries[id];
     iTitle.value = entry.title;
-    iPrice.value = entry.price;
+    iPrice.value = entry.price.toFixed(2);
     iPaidBy.value = entry.paidBy;
     iMethod.value = entry.method;
     partition = entry.partition;
