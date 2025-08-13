@@ -118,6 +118,8 @@ function callEntry() {
         .filter((i) => i.checked)
         .map((i) => i.name);
 
+    if (!title || !price || !paidBy || !method || contributors.length === 0) return;
+
     let details = {};
     if (method == "detailed") {
         for (let id of contributors) {
@@ -126,9 +128,10 @@ function callEntry() {
             if (isNaN(detailedPrice)) return;
             details[id] = detailedPrice;
         }
-    }
 
-    if (!title || !price || !paidBy || !method || contributors.length === 0) return;
+        // Filter out contributors with 0 detailed price
+        contributors = contributors.filter((id) => details[id] != 0);
+    }
 
     let entry = {
         title,
