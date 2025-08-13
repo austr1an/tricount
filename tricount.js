@@ -505,7 +505,7 @@ function makeContributorView(id) {
     label.className = "contributor dynParticipantRef_" + id;
     label.innerHTML = `
     <div>
-        <input type="checkbox" id="iDynContrib_${id}" name="${id}" checked />
+        <input type="checkbox" id="iDynContrib_${id}" name="${id}" ${addMode ? "checked" : ""} />
         ${participants[id]}
     </div>
     <p class="contribution">$0.00</p>
