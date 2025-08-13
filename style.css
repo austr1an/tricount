@@ -1,5 +1,6 @@
 .form {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .nodisplay {
@@ -8,7 +9,7 @@
 
 fieldset {
     margin: 10px;
-    width: 270px;
+    width: 265px;
     padding: 10px;
 }
 
@@ -98,4 +99,12 @@ h4 {
 
 .negative {
     color: red;
+}
+
+.reimbursement {
+    background: #0004;
+    margin-top: 5px;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
 }

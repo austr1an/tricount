@@ -383,6 +383,8 @@ function renderBalances() {
     // Individual balances
     iBalances.innerHTML = "";
 
+    let balances = {};
+
     for (let id in participants) {
         let name = participants[id];
 
@@ -412,17 +414,78 @@ function renderBalances() {
             }
         }
 
-        let balance = paid - worth;
+        balances[id] = paid - worth;
 
         iBalances.innerHTML += `
             <div class="balance">
                 <h4>${name}</h4>
                 <p>Paid: $${paid.toFixed(2)}<br />Worth: $${worth.toFixed(2)}</p>
-                <p class="balance_price ${balance >= 0 ? "positive" : "negative"}">
-                    $${balance.toFixed(2)}
+                <p class="balance_price ${balances[id] >= 0 ? "positive" : "negative"}">
+                    $${balances[id].toFixed(2)}
                 </p>
             </div>`;
     }
+
+    // Reimbursements
+
+    iReimbursements.innerHTML = "";
+
+    let remb = getBestReimbursement(balances);
+
+    while (remb != null) {
+        let { A, B, transaction } = remb;
+        balances[A] += transaction;
+        balances[B] -= transaction;
+
+        iReimbursements.innerHTML += `
+        <div class="reimbursement">
+            <p><strong>${participants[A]}</strong> owes <strong>${participants[B]}</strong></p>
+            <p>$${transaction.toFixed(2)}</p>
+        </div>
+        `;
+
+        remb = getBestReimbursement(balances);
+    }
+}
+
+// Algorithm that finds the best reimbursement
+// Symbols: A owes B
+// B is set as the participant with the highest positive balance
+// A is set as the participant with the highest negative balance under B (in absolute value)
+// If A does not exist, A is set as the highest negative balance (in absolute value)
+function getBestReimbursement(balances) {
+    let B = -1;
+    let BBalance = 0;
+    for (let id in participants)
+        if (balances[id] > BBalance) {
+            BBalance = balances[id];
+            B = id;
+        }
+
+    if (B == -1) return null;
+
+    let transaction = 0;
+
+    let A = -1;
+    let ABalance = 0;
+    for (let id in participants)
+        if (-BBalance <= balances[id] && balances[id] < ABalance) {
+            ABalance = balances[id];
+            A = id;
+        }
+
+    if (A != -1) transaction = -ABalance;
+    else {
+        transaction = BBalance;
+        for (let id in participants)
+            if (balances[id] < ABalance) {
+                ABalance = balances[id];
+                A = id;
+            }
+        if (A == -1) return null;
+    }
+
+    return { A, B, transaction };
 }
 
 function makeContributorView(id) {
