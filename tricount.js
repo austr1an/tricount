@@ -184,12 +184,11 @@ function renderContributions() {
         let contribution = document.querySelector(`#iDynContribLabel_${id} .contribution`);
         let checked = document.getElementById("iDynContrib_" + id).checked;
 
+        let totalContributors = Array.from(getContributors()).filter((e) => e.checked).length;
+
         switch (iMethod.value) {
             // Split equally
             case "split":
-                let totalContributors = Array.from(getContributors()).filter(
-                    (e) => e.checked
-                ).length;
                 contribution.innerText = checked
                     ? `$${(price / totalContributors).toFixed(2)}`
                     : "$0.00";
@@ -219,7 +218,9 @@ function renderContributions() {
             case "detailed":
                 // If detailed bill views is already on, skip to keep balances
                 if (contribution.children[0]?.tagName.toLowerCase() !== "input")
-                    contribution.innerHTML = `$ <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="0.00" />`;
+                    contribution.innerHTML = `$ <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="${(
+                        price / (totalContributors || 1)
+                    ).toFixed(2)}" />`;
                 let input = contribution.children[0];
                 input.onkeyup = renderContributions;
                 input.disabled = !checked;
