@@ -11,3 +11,5 @@ Like the official version, it has three entry modes:
 -   **Detailed bill:** Alex buys worth $4 for himself and worth $1 for Emma.
 
 The app automatically saves data inside the browser, so that the Tricount can still be accessed after closing the window.
+
+![Illustration](example.png)
