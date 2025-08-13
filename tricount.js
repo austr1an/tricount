@@ -238,7 +238,6 @@ function renderContributions() {
         }
 
         iPrice.value = totalPrice.toFixed(2);
-        console.log(totalPrice);
     }
 }
 
@@ -349,6 +348,7 @@ function renderEditEntry(id) {
     let entry = entries[id];
     iTitle.value = entry.title;
     iPrice.value = entry.price.toFixed(2);
+    iPrice.disabled = false;
     iPaidBy.value = entry.paidBy;
     iMethod.value = entry.method;
     partition = entry.partition;
