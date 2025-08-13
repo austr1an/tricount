@@ -1,0 +1,101 @@
+.form {
+    display: flex;
+}
+
+.nodisplay {
+    display: none;
+}
+
+fieldset {
+    margin: 10px;
+    width: 270px;
+    padding: 10px;
+}
+
+input[type="text"],
+select {
+    width: 200px;
+}
+
+.entry {
+    background: #0004;
+    padding: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.entry:hover {
+    background: #0006;
+}
+
+.entry.selected {
+    border: solid 1px black;
+    padding: 4px;
+}
+
+p,
+h4 {
+    margin: 0;
+}
+
+.entry_price {
+    font-size: 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.entry.selected .entry_price {
+    top: 4px;
+    right: 4px;
+}
+
+.contributor {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px;
+    margin: 2px 0;
+    user-select: none;
+}
+
+.contributor:has(input:checked) {
+    background: #0004;
+}
+
+.contribution {
+    height: fit-content;
+    margin: auto 0;
+}
+
+.contribution button {
+    height: 22px;
+    width: 22px;
+    text-align: center;
+}
+
+.contribution input {
+    width: 80px;
+}
+
+.balance {
+    position: relative;
+    background: #0004;
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.balance_price {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 20px;
+}
+
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}

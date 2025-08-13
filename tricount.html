@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tricount</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1>Tricount</h1>
+
+        <button id="iReset">Reset Tricount</button>
+
+        <div class="form">
+            <fieldset>
+                <legend>Participants</legend>
+                <input type="text" name="iParticipant" id="iParticipant" />
+                <button id="iButtonAddPart">Add</button>
+                <select name="iRmParticipant" id="iRmParticipant"></select>
+                <button id="iButtonRmPart">Remove</button>
+                <p>Removing a participant also removes their contributions</p>
+            </fieldset>
+
+            <fieldset>
+                <legend id="iTextEntryMode">New entry</legend>
+
+                <div>
+                    <label for="iTitle">
+                        Title:
+                        <input type="text" name="iTitle" id="iTitle" />
+                    </label>
+                </div>
+                <div>
+                    <label for="iPrice">
+                        Price: $
+                        <input type="number" name="iPrice" id="iPrice" />
+                    </label>
+                </div>
+                <div>
+                    <label for="iPaidBy">
+                        Paid by
+                        <select name="iPaidBy" id="iPaidBy"></select>
+                    </label>
+                </div>
+                <div>
+                    <select name="iMethod" id="iMethod">
+                        <option value="split">Split equally</option>
+                        <option value="parts">Split by parts</option>
+                        <option value="detailed">Detailed bill</option>
+                    </select>
+                </div>
+                <div id="iContributors"></div>
+
+                <button id="iButtonCallEntry">Add</button>
+                <button id="iButtonCancel">Cancel</button>
+                <button id="iDeleteEntry" class="nodisplay">Delete</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Entries</legend>
+                <p>Click to view/edit/delete</p>
+
+                <div id="iEntries"></div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Balances</legend>
+                <p>Total spent: <strong id="iTotalSpent">$0.00</strong></p>
+                <div id="iBalances"></div>
+            </fieldset>
+        </div>
+
+        <script src="tricount.js"></script>
+    </body>
+</html>
