@@ -7,6 +7,10 @@
     display: none;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 fieldset {
     margin: 10px;
     width: 265px;
@@ -93,11 +97,11 @@ h4 {
     font-size: 20px;
 }
 
-.positive {
+.green {
     color: green;
 }
 
-.negative {
+.red {
     color: red;
 }
 

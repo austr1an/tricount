@@ -324,10 +324,10 @@ function renderEntries() {
         div.id = "iDynEntry_" + id;
         div.innerHTML = `
             <h4>${entry.title}</h4>
-            <p>Paid by <strong>${participants[entry.paidBy]}</strong><br />
-            For <strong>${entry.contributors.length}</strong> participant${
+            <p>Paid by <span class="bold">${participants[entry.paidBy]}</span><br />
+            For <span class="bold">${entry.contributors.length}</span> participant${
             entry.contributors.length > 1 ? "s" : ""
-            } (${parseMethod(entry.method)})</p>
+        } (${parseMethod(entry.method)})</p>
             <p class="entry_cost">$${entry.cost.toFixed(2)}</p>
         `;
         iEntries.appendChild(div);
@@ -425,7 +425,7 @@ function renderBalances() {
             <div class="balance">
                 <h4>${name}</h4>
                 <p>Paid: $${paid.toFixed(2)}<br />Expenses: $${expense.toFixed(2)}</p>
-                <p class="balance_cost ${balances[id] >= 0 ? "positive" : "negative"}">
+                <p class="balance_cost ${balances[id] >= 0 ? "green" : "red"}">
                     $${balances[id].toFixed(2)}
                 </p>
             </div>`;
@@ -444,7 +444,9 @@ function renderBalances() {
 
         iReimbursements.innerHTML += `
         <div class="reimbursement">
-            <p><strong>${participants[A]}</strong> owes <strong>${participants[B]}</strong></p>
+            <p><span class="bold">${participants[A]}</span> owes <span class="bold">${
+            participants[B]
+        }</span></p>
             <p>$${transaction.toFixed(2)}</p>
         </div>
         `;
