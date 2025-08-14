@@ -4,6 +4,8 @@ let partition = {};
 let LATEST_ID = parseInt(localStorage.getItem("LATEST_ID"));
 if (isNaN(LATEST_ID)) LATEST_ID = -1;
 
+let alertOn = false;
+
 let participants = JSON.parse(localStorage.getItem("participants") || "{}");
 let entries = JSON.parse(localStorage.getItem("entries") || "{}");
 
@@ -108,6 +110,17 @@ function getContributors() {
     return document.querySelectorAll(".contributor input");
 }
 
+function addAlert(message) {
+    alertOn = true;
+    if (iAlertMessage.innerText != "") iAlertMessage.innerHTML += "<br />";
+    iAlertMessage.innerText += message;
+}
+
+function clearAlert() {
+    alertOn = false;
+    iAlertMessage.innerText = "";
+}
+
 function callEntry() {
     let title = iTitle.value.trim();
     let cost = parseFloat(iCost.value);
@@ -118,20 +131,27 @@ function callEntry() {
         .filter((i) => i.checked)
         .map((i) => i.name);
 
-    if (!title || !cost || !paidBy || !method || contributors.length === 0) return;
+    clearAlert();
+    if (!title) addAlert("Title cannot be empty");
+    if (!cost) addAlert("A cost must be provided");
+    if (!paidBy) addAlert("Payer must be provided");
+    if (!method) addAlert("A division method must be provided");
+    if (contributors.length === 0) addAlert("At least one participant must be selected");
 
     let details = {};
     if (method == "detailed") {
         for (let id of contributors) {
             let detailedCost = parseFloat(document.getElementById("iDynDetail_" + id).value);
 
-            if (isNaN(detailedCost)) return;
+            if (isNaN(detailedCost)) addAlert("Invalid cost for " + participants[id]);
             details[id] = detailedCost;
         }
 
         // Filter out contributors with 0 detailed cost
         contributors = contributors.filter((id) => details[id] != 0);
     }
+
+    if (alertOn) return;
 
     let entry = {
         title,
@@ -168,6 +188,7 @@ function resetEntryForm() {
     iCost.disabled = false;
     iPaidBy.value = iPaidBy.options[0]?.value || "";
     iMethod.value = "split";
+    clearAlert();
     for (let input of getContributors()) input.checked = true;
     if (!addMode) switchMode();
     resetPartition();
@@ -345,6 +366,8 @@ function renderEntries() {
 
 function renderEditEntry(id) {
     if (addMode) switchMode();
+
+    clearAlert();
 
     document.getElementById("iDynEntry_" + editEntryId)?.classList.remove("selected");
     editEntryId = id;
