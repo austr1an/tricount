@@ -259,7 +259,6 @@ function renderContributions() {
         for (let id in participants) {
             let currentCost = parseFloat(document.getElementById("iDynDetail_" + id).value);
             if (currentCost) totalCost += currentCost;
-            console.log(currentCost, document.getElementById("iDynDetail_" + id).value);
         }
 
         iCost.value = totalCost.toFixed(2);
