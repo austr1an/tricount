@@ -1,8 +1,11 @@
 let addMode = true;
 let editEntryId = null;
 let partition = {};
+let SYMBOL = localStorage.getItem("SYMBOL") || "$";
+let DECIMALS = parseInt(localStorage.getItem("DECIMALS"));
 let LATEST_ID = parseInt(localStorage.getItem("LATEST_ID"));
 if (isNaN(LATEST_ID)) LATEST_ID = -1;
+if (isNaN(DECIMALS) || DECIMALS < 0 || DECIMALS > 4) DECIMALS = 2;
 
 let alertOn = false;
 
@@ -13,6 +16,9 @@ let entries = JSON.parse(localStorage.getItem("entries") || "{}");
 
 for (let id in participants) makeContributorView(id);
 
+iCostSymbol.innerText = SYMBOL;
+iSymbol.value = SYMBOL;
+iDecimals.value = DECIMALS.toString();
 resetEntryForm();
 renderBalances();
 renderEntries();
@@ -23,6 +29,8 @@ function save() {
     localStorage.setItem("participants", JSON.stringify(participants));
     localStorage.setItem("entries", JSON.stringify(entries));
     localStorage.setItem("LATEST_ID", LATEST_ID.toString());
+    localStorage.setItem("SYMBOL", SYMBOL);
+    localStorage.setItem("DECIMALS", DECIMALS.toString());
 }
 
 function reset() {
@@ -30,17 +38,41 @@ function reset() {
     localStorage.clear();
     participants = {};
     entries = {};
+    SYMBOL = "$";
+    DECIMALS = 2;
 
     // Reset views
     iRmParticipant.innerHTML = "";
     iPaidBy.innerHTML = "";
     iContributors.innerHTML = "";
+    iCostSymbol.innerText = SYMBOL;
+    iSymbol.value = SYMBOL;
+    iDecimals.value = DECIMALS.toString();
     resetEntryForm();
     renderEntries();
     renderBalances();
 }
 
 iReset.onclick = reset;
+
+// Symbol manager
+
+function setSymbol() {
+    SYMBOL = iSymbol.value.trim() || "$";
+    DECIMALS = parseInt(iDecimals.value);
+    if (isNaN(DECIMALS) || DECIMALS < 0 || DECIMALS > 4) DECIMALS = 2;
+
+    iCostSymbol.innerText = SYMBOL;
+
+    renderEntries();
+    renderBalances();
+    renderContributions();
+    save();
+}
+
+iSymbol.onkeyup = setSymbol;
+iDecimals.onkeyup = setSymbol;
+iDecimals.onchange = setSymbol;
 
 // Id manager
 
@@ -214,8 +246,8 @@ function renderContributions() {
             // Split equally
             case "split":
                 contribution.innerText = checked
-                    ? `$${(cost / totalContributors).toFixed(2)}`
-                    : "$0.00";
+                    ? `${SYMBOL} ${(cost / totalContributors).toFixed(DECIMALS)}`
+                    : `${SYMBOL} 0.00`;
 
                 break;
 
@@ -230,7 +262,7 @@ function renderContributions() {
                     x${parts}
                     <button id="iDynPlus_${id}">+</button>
                     <button id="iDynMinus_${id}" ${parts <= 0 ? "disabled" : ""}>-</button>
-                    $${((parts * cost) / totalParts).toFixed(2)}
+                    ${SYMBOL} ${((parts * cost) / totalParts).toFixed(DECIMALS)}
                 `;
 
                 document.getElementById("iDynPlus_" + id).onclick = changePartition;
@@ -242,9 +274,9 @@ function renderContributions() {
             case "detailed":
                 // If "Split as amounts" views is already on, skip to keep balances
                 if (contribution.children[0]?.tagName.toLowerCase() !== "input")
-                    contribution.innerHTML = `$ <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="${(
+                    contribution.innerHTML = `${SYMBOL} <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="${(
                         cost / (totalContributors || 1)
-                    ).toFixed(2)}" />`;
+                    ).toFixed(DECIMALS)}" />`;
                 let input = contribution.children[0];
                 input.onkeyup = renderContributions;
                 input.disabled = !checked;
@@ -261,7 +293,7 @@ function renderContributions() {
             if (currentCost) totalCost += currentCost;
         }
 
-        iCost.value = totalCost.toFixed(2);
+        iCost.value = totalCost.toFixed(DECIMALS);
     }
 }
 
@@ -348,7 +380,7 @@ function renderEntries() {
             For <span class="bold">${entry.contributors.length}</span> participant${
             entry.contributors.length > 1 ? "s" : ""
         } (${parseMethod(entry.method)})</p>
-            <p class="entry_cost">$${entry.cost.toFixed(2)}</p>
+            <p class="entry_cost">${SYMBOL} ${entry.cost.toFixed(DECIMALS)}</p>
         `;
         iEntries.appendChild(div);
 
@@ -374,7 +406,7 @@ function renderEditEntry(id) {
 
     let entry = entries[id];
     iTitle.value = entry.title;
-    iCost.value = entry.cost.toFixed(2);
+    iCost.value = entry.cost.toFixed(DECIMALS);
     iCost.disabled = false;
     iPaidBy.value = entry.paidBy;
     iMethod.value = entry.method;
@@ -391,7 +423,7 @@ function renderEditEntry(id) {
     if (entry.method == "detailed") {
         iCost.disabled = true;
         for (let id of entry.contributors)
-            document.getElementById("iDynDetail_" + id).value = entry.details[id].toFixed(2);
+            document.getElementById("iDynDetail_" + id).value = entry.details[id].toFixed(DECIMALS);
     }
 
     // Another render to set iCost correctly
@@ -405,7 +437,7 @@ function renderBalances() {
         totalSpent += entries[eid].cost;
     }
 
-    iTotalSpent.innerText = `$${totalSpent.toFixed(2)}`;
+    iTotalSpent.innerText = `${SYMBOL} ${totalSpent.toFixed(DECIMALS)}`;
 
     // Individual balances
     iBalances.innerHTML = "";
@@ -446,9 +478,10 @@ function renderBalances() {
         iBalances.innerHTML += `
             <div class="balance">
                 <h4>${name}</h4>
-                <p>Paid: $${paid.toFixed(2)}<br />Expenses: $${expense.toFixed(2)}</p>
+                <p>Paid: ${SYMBOL} ${paid.toFixed(DECIMALS)}<br />
+                Expenses: ${SYMBOL} ${expense.toFixed(DECIMALS)}</p>
                 <p class="balance_cost ${balances[id] >= 0 ? "green" : "red"}">
-                    $${balances[id].toFixed(2)}
+                    ${SYMBOL} ${balances[id].toFixed(DECIMALS)}
                 </p>
             </div>`;
     }
@@ -469,7 +502,7 @@ function renderBalances() {
             <p><span class="bold">${participants[A]}</span> owes <span class="bold">${
             participants[B]
         }</span></p>
-            <p>$${transaction.toFixed(2)}</p>
+            <p>${SYMBOL} ${transaction.toFixed(DECIMALS)}</p>
         </div>
         `;
 
@@ -537,7 +570,7 @@ function makeContributorView(id) {
         <input type="checkbox" id="iDynContrib_${id}" name="${id}" ${addMode ? "checked" : ""} />
         ${participants[id]}
     </div>
-    <p class="contribution">$0.00</p>
+    <p class="contribution">${SYMBOL} 0.00</p>
     `;
 
     iContributors.appendChild(label);

@@ -9,7 +9,22 @@
     <body>
         <h1>Tricount</h1>
 
-        <button id="iReset">Reset Tricount</button>
+        <div>
+            <button id="iReset">Reset Tricount</button>
+        </div>
+
+        <div>
+            <label for="iSymbol">
+                Symbol <input type="text" name="iSymbol" id="iSymbol" value="$" placeholder="$" />
+            </label>
+        </div>
+
+        <div>
+            <label for="iDecimals">
+                Decimals
+                <input type="number" name="iDecimals" id="iDecimals" value="2" min="0" max="4" />
+            </label>
+        </div>
 
         <div class="form">
             <fieldset>
@@ -32,7 +47,7 @@
                 </div>
                 <div>
                     <label for="iCost">
-                        Cost: $
+                        Cost: <span id="iCostSymbol"></span>
                         <input type="number" name="iCost" id="iCost" />
                     </label>
                 </div>
