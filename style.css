@@ -40,14 +40,14 @@ h4 {
     margin: 0;
 }
 
-.entry_price {
+.entry_cost {
     font-size: 20px;
     position: absolute;
     top: 5px;
     right: 5px;
 }
 
-.entry.selected .entry_price {
+.entry.selected .entry_cost {
     top: 4px;
     right: 4px;
 }
@@ -86,7 +86,7 @@ h4 {
     padding: 5px;
 }
 
-.balance_price {
+.balance_cost {
     position: absolute;
     top: 5px;
     right: 5px;

@@ -89,7 +89,7 @@ function removeParticipant() {
             entry.contributors = entry.contributors.filter((cid) => cid !== id);
         if (id in entry.partition) delete entry.partition[id];
         if (id in entry.details) {
-            entry.price -= entry.details[id];
+            entry.cost -= entry.details[id];
             delete entry.details[id];
         }
         if (entry.paidBy === id) delete entries[eid];
@@ -110,7 +110,7 @@ function getContributors() {
 
 function callEntry() {
     let title = iTitle.value.trim();
-    let price = parseFloat(iPrice.value);
+    let cost = parseFloat(iCost.value);
     let paidBy = iPaidBy.value;
     let method = iMethod.value;
 
@@ -118,24 +118,24 @@ function callEntry() {
         .filter((i) => i.checked)
         .map((i) => i.name);
 
-    if (!title || !price || !paidBy || !method || contributors.length === 0) return;
+    if (!title || !cost || !paidBy || !method || contributors.length === 0) return;
 
     let details = {};
     if (method == "detailed") {
         for (let id of contributors) {
-            let detailedPrice = parseFloat(document.getElementById("iDynDetail_" + id).value);
+            let detailedCost = parseFloat(document.getElementById("iDynDetail_" + id).value);
 
-            if (isNaN(detailedPrice)) return;
-            details[id] = detailedPrice;
+            if (isNaN(detailedCost)) return;
+            details[id] = detailedCost;
         }
 
-        // Filter out contributors with 0 detailed price
+        // Filter out contributors with 0 detailed cost
         contributors = contributors.filter((id) => details[id] != 0);
     }
 
     let entry = {
         title,
-        price,
+        cost,
         paidBy,
         method,
         contributors,
@@ -164,8 +164,8 @@ iButtonCallEntry.onclick = callEntry;
 
 function resetEntryForm() {
     iTitle.value = "";
-    iPrice.value = "";
-    iPrice.disabled = false;
+    iCost.value = "";
+    iCost.disabled = false;
     iPaidBy.value = iPaidBy.options[0]?.value || "";
     iMethod.value = "split";
     for (let input of getContributors()) input.checked = true;
@@ -180,8 +180,8 @@ function resetEntryForm() {
 iButtonCancel.onclick = resetEntryForm;
 
 function renderContributions() {
-    let price = parseFloat(iPrice.value);
-    if (isNaN(price)) price = 0;
+    let cost = parseFloat(iCost.value);
+    if (isNaN(cost)) cost = 0;
 
     for (let id in participants) {
         let contribution = document.querySelector(`#iDynContribLabel_${id} .contribution`);
@@ -193,12 +193,12 @@ function renderContributions() {
             // Split equally
             case "split":
                 contribution.innerText = checked
-                    ? `$${(price / totalContributors).toFixed(2)}`
+                    ? `$${(cost / totalContributors).toFixed(2)}`
                     : "$0.00";
 
                 break;
 
-            // Split by parts
+            // Split as parts
             case "parts":
                 let parts = partition[id];
                 let totalParts = Object.values(partition).reduce((a, b) => a + b, 0);
@@ -209,7 +209,7 @@ function renderContributions() {
                     x${parts}
                     <button id="iDynPlus_${id}">+</button>
                     <button id="iDynMinus_${id}" ${parts <= 0 ? "disabled" : ""}>-</button>
-                    $${((parts * price) / totalParts).toFixed(2)}
+                    $${((parts * cost) / totalParts).toFixed(2)}
                 `;
 
                 document.getElementById("iDynPlus_" + id).onclick = changePartition;
@@ -217,12 +217,12 @@ function renderContributions() {
 
                 break;
 
-            // Detailed bill
+            // Split as amounts
             case "detailed":
-                // If detailed bill views is already on, skip to keep balances
+                // If "Split as amounts" views is already on, skip to keep balances
                 if (contribution.children[0]?.tagName.toLowerCase() !== "input")
                     contribution.innerHTML = `$ <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="${(
-                        price / (totalContributors || 1)
+                        cost / (totalContributors || 1)
                     ).toFixed(2)}" />`;
                 let input = contribution.children[0];
                 input.onkeyup = renderContributions;
@@ -232,20 +232,20 @@ function renderContributions() {
         }
     }
 
-    // Detailed bill: set total price
+    // Split as amounts: set total cost
     if (iMethod.value == "detailed") {
-        let totalPrice = 0;
+        let totalCost = 0;
         for (let id in participants) {
-            let currentPrice = parseFloat(document.getElementById("iDynDetail_" + id).value);
-            if (currentPrice) totalPrice += currentPrice;
-            console.log(currentPrice, document.getElementById("iDynDetail_" + id).value);
+            let currentCost = parseFloat(document.getElementById("iDynDetail_" + id).value);
+            if (currentCost) totalCost += currentCost;
+            console.log(currentCost, document.getElementById("iDynDetail_" + id).value);
         }
 
-        iPrice.value = totalPrice.toFixed(2);
+        iCost.value = totalCost.toFixed(2);
     }
 }
 
-iPrice.onkeyup = renderContributions;
+iCost.onkeyup = renderContributions;
 
 function resetPartition() {
     partition = {};
@@ -253,7 +253,7 @@ function resetPartition() {
 }
 
 function initializeMethod() {
-    iPrice.disabled = false;
+    iCost.disabled = false;
 
     switch (iMethod.value) {
         case "parts":
@@ -261,7 +261,7 @@ function initializeMethod() {
             break;
 
         case "detailed":
-            iPrice.disabled = true;
+            iCost.disabled = true;
             break;
     }
 
@@ -308,9 +308,9 @@ function parseMethod(method) {
         case "split":
             return "Split equally";
         case "parts":
-            return "Split by parts";
+            return "Split as parts";
         case "detailed":
-            return "Detailed bill";
+            return "Split as amounts";
     }
 }
 
@@ -325,9 +325,10 @@ function renderEntries() {
         div.innerHTML = `
             <h4>${entry.title}</h4>
             <p>Paid by <strong>${participants[entry.paidBy]}</strong><br />
-            ${parseMethod(entry.method)} between
-            <strong>${entry.contributors.length}</strong> participants(s)</p>
-            <p class="entry_price">$${entry.price.toFixed(2)}</p>
+            For <strong>${entry.contributors.length}</strong> participant${
+            entry.contributors.length > 1 ? "s" : ""
+            } (${parseMethod(entry.method)})</p>
+            <p class="entry_cost">$${entry.cost.toFixed(2)}</p>
         `;
         iEntries.appendChild(div);
 
@@ -351,8 +352,8 @@ function renderEditEntry(id) {
 
     let entry = entries[id];
     iTitle.value = entry.title;
-    iPrice.value = entry.price.toFixed(2);
-    iPrice.disabled = false;
+    iCost.value = entry.cost.toFixed(2);
+    iCost.disabled = false;
     iPaidBy.value = entry.paidBy;
     iMethod.value = entry.method;
     partition = entry.partition;
@@ -364,14 +365,14 @@ function renderEditEntry(id) {
     // First render to create input nodes
     renderContributions();
 
-    // Detailed bill
+    // Split as amounts
     if (entry.method == "detailed") {
-        iPrice.disabled = true;
+        iCost.disabled = true;
         for (let id of entry.contributors)
             document.getElementById("iDynDetail_" + id).value = entry.details[id].toFixed(2);
     }
 
-    // Another render to set iPrice correctly
+    // Another render to set iCost correctly
     renderContributions();
 }
 
@@ -379,7 +380,7 @@ function renderBalances() {
     // Total spent
     let totalSpent = 0;
     for (let eid in entries) {
-        totalSpent += entries[eid].price;
+        totalSpent += entries[eid].cost;
     }
 
     iTotalSpent.innerText = `$${totalSpent.toFixed(2)}`;
@@ -393,38 +394,38 @@ function renderBalances() {
         let name = participants[id];
 
         let paid = 0;
-        let worth = 0;
+        let expense = 0;
 
         for (let eid in entries) {
             let entry = entries[eid];
             if (entry.paidBy === id) {
-                paid += entry.price;
+                paid += entry.cost;
             }
 
             switch (entry.method) {
                 case "split":
                     if (entry.contributors.includes(id))
-                        worth += entry.price / entry.contributors.length;
+                        expense += entry.cost / entry.contributors.length;
                     break;
                 case "parts":
                     let totalParts = Object.values(entry.partition).reduce((a, b) => a + b, 0);
                     if (totalParts <= 0) totalParts = 1;
 
-                    worth += (entry.price * entry.partition[id]) / totalParts;
+                    expense += (entry.cost * entry.partition[id]) / totalParts;
                     break;
                 case "detailed":
-                    if (entry.contributors.includes(id)) worth += entry.details[id];
+                    if (entry.contributors.includes(id)) expense += entry.details[id];
                     break;
             }
         }
 
-        balances[id] = paid - worth;
+        balances[id] = paid - expense;
 
         iBalances.innerHTML += `
             <div class="balance">
                 <h4>${name}</h4>
-                <p>Paid: $${paid.toFixed(2)}<br />Worth: $${worth.toFixed(2)}</p>
-                <p class="balance_price ${balances[id] >= 0 ? "positive" : "negative"}">
+                <p>Paid: $${paid.toFixed(2)}<br />Expenses: $${expense.toFixed(2)}</p>
+                <p class="balance_cost ${balances[id] >= 0 ? "positive" : "negative"}">
                     $${balances[id].toFixed(2)}
                 </p>
             </div>`;
