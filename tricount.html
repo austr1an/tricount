@@ -9,67 +9,96 @@
     <body>
         <h1>Tricount</h1>
 
-        <div>
-            <button id="iReset">Reset Tricount</button>
-        </div>
+        <div class="form">
+            <fieldset>
+                <legend>General settings</legend>
+                <label for="iSymbol" class="container_flex">
+                    <span>Symbol</span>
+                    <input
+                        type="text"
+                        name="iSymbol"
+                        id="iSymbol"
+                        class="symbol"
+                        value="$"
+                        placeholder="$"
+                    />
+                </label>
+                <label for="iDecimals" class="container_flex">
+                    <span>Decimals</span>
+                    <input
+                        type="number"
+                        name="iDecimals"
+                        id="iDecimals"
+                        class="symbol"
+                        value="2"
+                        min="0"
+                        max="4"
+                    />
+                </label>
 
-        <div>
-            <label for="iSymbol">
-                Symbol <input type="text" name="iSymbol" id="iSymbol" value="$" placeholder="$" />
-            </label>
-        </div>
+                <hr />
 
-        <div>
-            <label for="iDecimals">
-                Decimals
-                <input type="number" name="iDecimals" id="iDecimals" value="2" min="0" max="4" />
-            </label>
+                <div>
+                    <button id="iReset" class="gen_button">Reset Tricount</button>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Participants</legend>
+                <div class="container_flex">
+                    <input type="text" name="iParticipant" id="iParticipant" placeholder="Name" />
+                    <button id="iButtonAddPart" class="gen_button">Add</button>
+                </div>
+
+                <hr />
+
+                <div class="container_flex">
+                    <select name="iRmParticipant" id="iRmParticipant"></select>
+                    <button id="iButtonRmPart" class="gen_button">Remove</button>
+                </div>
+                <p>Removing a participant also removes their contributions</p>
+            </fieldset>
         </div>
 
         <div class="form">
             <fieldset>
-                <legend>Participants</legend>
-                <input type="text" name="iParticipant" id="iParticipant" />
-                <button id="iButtonAddPart">Add</button>
-                <select name="iRmParticipant" id="iRmParticipant"></select>
-                <button id="iButtonRmPart">Remove</button>
-                <p>Removing a participant also removes their contributions</p>
-            </fieldset>
-
-            <fieldset>
                 <legend id="iTextEntryMode">New entry</legend>
 
-                <div>
-                    <label for="iTitle">
-                        Title:
-                        <input type="text" name="iTitle" id="iTitle" />
-                    </label>
-                </div>
-                <div>
-                    <label for="iCost">
-                        Cost: <span id="iCostSymbol"></span>
+                <label for="iTitle" class="container_flex">
+                    <span>Title</span>
+                    <input type="text" name="iTitle" id="iTitle" />
+                </label>
+                <label for="iCost" class="container_flex">
+                    <span>Cost</span>
+                    <div>
+                        <span id="iCostSymbol"></span>
                         <input type="number" name="iCost" id="iCost" />
-                    </label>
-                </div>
-                <div>
-                    <label for="iPaidBy">
-                        Paid by
-                        <select name="iPaidBy" id="iPaidBy"></select>
-                    </label>
-                </div>
-                <div>
+                    </div>
+                </label>
+                <label for="iPaidBy" class="container_flex">
+                    <span>Paid by</span>
+                    <select name="iPaidBy" id="iPaidBy"></select>
+                </label>
+                <label for="iMethod" class="container_flex">
+                    <span>Split</span>
                     <select name="iMethod" id="iMethod">
-                        <option value="split">Split equally</option>
-                        <option value="parts">Split as parts</option>
-                        <option value="percentages">Split as percentages</option>
-                        <option value="detailed">Split as amounts</option>
+                        <option value="split">equally</option>
+                        <option value="parts">as parts</option>
+                        <option value="percentages">as percentages</option>
+                        <option value="detailed">as amounts</option>
                     </select>
-                </div>
+                </label>
+
+                <hr />
+
+                <p>Participants</p>
                 <div id="iContributors"></div>
 
-                <button id="iButtonCallEntry">Add</button>
-                <button id="iButtonCancel">Cancel</button>
-                <button id="iDeleteEntry" class="nodisplay">Delete</button>
+                <hr />
+
+                <button id="iButtonCallEntry" class="gen_button">Add</button>
+                <button id="iButtonCancel" class="gen_button">Cancel</button>
+                <button id="iDeleteEntry" class="nodisplay gen_button">Delete</button>
 
                 <p class="bold red" id="iAlertMessage"></p>
             </fieldset>

@@ -34,7 +34,8 @@ function save() {
 }
 
 function reset() {
-    if (!confirm("Are you sure you want to reset the Tricount?")) return;
+    if (!confirm("This will reset all participants, entries and settings.\nClick OK to continue."))
+        return;
     localStorage.clear();
     participants = {};
     entries = {};
@@ -291,21 +292,22 @@ function renderContributions() {
 
             // Split as percentages
             case "percentages":
-                if (contribution.children[0]?.id !== `iDynPercent_${id}`)
+                if (!contribution.children[0]?.classList.contains("contribution_percentage"))
                     contribution.innerHTML = `
-                        <input type="number" name="iDynPercent_${id}" id="iDynPercent_${id}"
-                            value="${(100 / totalContributors).toFixed()}" /> %
-                        &emsp;
+                        <div class="contribution_percentage">
+                            <input type="number" name="iDynPercent_${id}" id="iDynPercent_${id}"
+                                value="${(100 / totalContributors).toFixed()}" /> %
+                        </div>
                         <span id="iDynPercentCost_${id}">${SYMBOL} ${(0).toFixed(DECIMALS)}</span>
                     `;
 
-                let percentageInput = contribution.children[0];
+                let percentageInput = document.getElementById("iDynPercent_" + id);
                 percentageInput.onkeyup = renderContributions;
                 percentageInput.onchange = renderContributions;
                 percentageInput.disabled = !checked;
                 if (!checked) percentageInput.value = "0";
 
-                let percent = parseFloat(document.getElementById("iDynPercent_" + id).value);
+                let percent = parseFloat(percentageInput.value);
                 if (!isNaN(percent))
                     document.getElementById("iDynPercentCost_" + id).innerText = `${SYMBOL} ${(
                         (percent * cost) /
@@ -626,7 +628,7 @@ function makeContributorView(id) {
     label.htmlFor = "iDynContrib_" + id;
     label.className = "contributor dynParticipantRef_" + id;
     label.innerHTML = `
-    <div>
+    <div class="contributor_name">
         <input type="checkbox" id="iDynContrib_${id}" name="${id}" ${addMode ? "checked" : ""} />
         ${participants[id]}
     </div>

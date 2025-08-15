@@ -1,3 +1,9 @@
+/* Misc */
+
+* {
+    box-sizing: border-box;
+}
+
 .form {
     display: flex;
     flex-wrap: wrap;
@@ -11,16 +17,51 @@
     font-weight: bold;
 }
 
+.container_flex {
+    display: flex;
+    justify-content: space-between;
+}
+
 fieldset {
     margin: 10px;
-    width: 265px;
+    width: 290px;
     padding: 10px;
 }
 
-input[type="text"],
-select {
-    width: 200px;
+hr {
+    border: none;
+    border-top: 1px solid gray;
 }
+
+legend {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+/* Inputs */
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 180px;
+}
+
+input[type="number"]:not(.symbol) {
+    appearance: textfield;
+}
+
+.gen_button {
+    min-width: 60px;
+}
+
+/* Symbols */
+
+input.symbol {
+    width: 50px;
+    appearance: auto;
+}
+
+/* Entries */
 
 .entry {
     background: #0004;
@@ -56,12 +97,19 @@ h4 {
     right: 4px;
 }
 
+/* Contributors */
+
 .contributor {
     display: flex;
     justify-content: space-between;
     padding: 2px;
     margin: 2px 0;
     user-select: none;
+    height: 26px;
+}
+
+.contributor_name {
+    margin: auto 0;
 }
 
 .contributor:has(input:checked) {
@@ -79,10 +127,25 @@ h4 {
     text-align: center;
 }
 
-.contribution input,
-#iSymbol {
+.contribution input {
     width: 80px;
 }
+
+.contribution_percentage input {
+    width: 40px;
+}
+
+.contribution:has(.contribution_percentage) {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.contribution.contribution:has(.contribution_percentage) span {
+    margin: auto 0;
+}
+
+/* Balances */
 
 .balance {
     position: relative;
@@ -105,6 +168,8 @@ h4 {
 .red {
     color: red;
 }
+
+/* Reimbursements */
 
 .reimbursement {
     background: #0004;
