@@ -40,6 +40,7 @@ function reset() {
     entries = {};
     SYMBOL = "$";
     DECIMALS = 2;
+    LATEST_ID = -1;
 
     // Reset views
     iRmParticipant.innerHTML = "";
