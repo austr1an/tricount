@@ -274,14 +274,17 @@ function renderContributions() {
             // Split as amounts
             case "detailed":
                 // If "Split as amounts" views is already on, skip to keep balances
-                if (contribution.children[0]?.id !== `iDynDetail_${id}`)
-                    contribution.innerHTML = `${SYMBOL} <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="${(
+                if (contribution.children[1]?.id !== `iDynDetail_${id}`)
+                    contribution.innerHTML = `<span id="iDynDetailSymbol_${id}"></span> <input type="number" name="iDynDetail_${id}" id="iDynDetail_${id}" value="${(
                         cost / (totalContributors || 1)
                     ).toFixed(DECIMALS)}" />`;
+
+                document.getElementById(`iDynDetailSymbol_${id}`).innerText = SYMBOL;
+
                 let detailedInput = contribution.children[0];
                 detailedInput.onkeyup = renderContributions;
                 detailedInput.disabled = !checked;
-                if (!checked) detailedInput.value = "0.00";
+                if (!checked) detailedInput.value = (0).toFixed(DECIMALS);
                 break;
         }
     }
