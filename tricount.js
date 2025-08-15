@@ -184,6 +184,23 @@ function callEntry() {
         contributors = contributors.filter((id) => details[id] != 0);
     }
 
+    let percentages = {};
+    if (method == "percentages") {
+        for (let id of contributors) {
+            let percent = parseFloat(document.getElementById(`iDynPercent_${id}`).value);
+
+            if (isNaN(percent)) addAlert("Invalid percentage for " + participants[id]);
+            percentages[id] = percent;
+        }
+
+        // Check that sum is 100
+        let sum = Object.values(percentages).reduce((a, b) => a + b, 0);
+        if (sum !== 100) addAlert("Percentages must sum to 100");
+
+        // Filter out contributors with 0 percentage
+        contributors = contributors.filter((id) => percentages[id] != 0);
+    }
+
     if (alertOn) return;
 
     let entry = {
@@ -194,6 +211,7 @@ function callEntry() {
         contributors,
         partition,
         details,
+        percentages,
     };
 
     if (addMode) {
@@ -268,6 +286,31 @@ function renderContributions() {
 
                 document.getElementById("iDynPlus_" + id).onclick = changePartition;
                 document.getElementById("iDynMinus_" + id).onclick = changePartition;
+
+                break;
+
+            // Split as percentages
+            case "percentages":
+                if (contribution.children[0]?.id !== `iDynPercent_${id}`)
+                    contribution.innerHTML = `
+                        <input type="number" name="iDynPercent_${id}" id="iDynPercent_${id}"
+                            value="${(100 / totalContributors).toFixed()}" /> %
+                        &emsp;
+                        <span id="iDynPercentCost_${id}">${SYMBOL} ${(0).toFixed(DECIMALS)}</span>
+                    `;
+
+                let percentageInput = contribution.children[0];
+                percentageInput.onkeyup = renderContributions;
+                percentageInput.onchange = renderContributions;
+                percentageInput.disabled = !checked;
+                if (!checked) percentageInput.value = "0";
+
+                let percent = parseFloat(document.getElementById("iDynPercent_" + id).value);
+                if (!isNaN(percent))
+                    document.getElementById("iDynPercentCost_" + id).innerText = `${SYMBOL} ${(
+                        (percent * cost) /
+                        100
+                    ).toFixed(DECIMALS)}`;
 
                 break;
 
@@ -365,6 +408,8 @@ function parseMethod(method) {
             return "Split equally";
         case "parts":
             return "Split as parts";
+        case "percentages":
+            return "Split as percentages";
         case "detailed":
             return "Split as amounts";
     }
@@ -423,6 +468,12 @@ function renderEditEntry(id) {
     // First render to create input nodes
     renderContributions();
 
+    // Split as percentages
+    if (entry.method == "percentages") {
+        for (let id of entry.contributors)
+            document.getElementById("iDynPercent_" + id).value = entry.percentages[id] || 0;
+    }
+
     // Split as amounts
     if (entry.method == "detailed") {
         iCost.disabled = true;
@@ -470,6 +521,10 @@ function renderBalances() {
                     if (totalParts <= 0) totalParts = 1;
 
                     expense += (entry.cost * entry.partition[id]) / totalParts;
+                    break;
+                case "percentages":
+                    if (entry.contributors.includes(id))
+                        expense += (entry.cost * entry.percentages[id]) / 100;
                     break;
                 case "detailed":
                     if (entry.contributors.includes(id)) expense += entry.details[id];
