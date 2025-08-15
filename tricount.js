@@ -348,7 +348,8 @@ iCost.onkeyup = renderContributions;
 
 function resetPartition() {
     partition = {};
-    for (let id in participants) partition[id] = 1;
+    for (let id in participants)
+        partition[id] = document.getElementById(`iDynContrib_${id}`).checked ? 1 : 0;
 }
 
 function initializeMethod() {
