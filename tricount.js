@@ -324,7 +324,7 @@ function renderContributions() {
 
                 document.getElementById(`iDynDetailSymbol_${id}`).innerText = SYMBOL;
 
-                let detailedInput = contribution.children[0];
+                let detailedInput = document.getElementById(`iDynDetail_${id}`);
                 detailedInput.onkeyup = renderContributions;
                 detailedInput.disabled = !checked;
                 if (!checked) detailedInput.value = (0).toFixed(DECIMALS);
