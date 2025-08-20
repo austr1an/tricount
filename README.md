@@ -1,5 +1,7 @@
 # Tricount
 
+<button onclick="https://austr1an.github.io/tricount/tricount">Open app online</button>
+
 A simple Tricount web implementation, inspired by the [original version](https://tricount.com).
 
 The app allows to manage participants, entries, and gives balances and reimbursement suggestions at the end.
