@@ -1,6 +1,6 @@
 # Tricount
 
-<button onclick="https://austr1an.github.io/tricount/tricount">Open app online</button>
+[OPEN APP ONLINE](https://austr1an.github.io/tricount/tricount)
 
 A simple Tricount web implementation, inspired by the [original version](https://tricount.com).
 
