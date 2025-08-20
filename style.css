@@ -131,17 +131,21 @@ h4 {
     width: 80px;
 }
 
+.contribution_percentage {
+    margin-right: 8px;
+}
+
 .contribution_percentage input {
     width: 40px;
 }
 
 .contribution:has(.contribution_percentage) {
-    width: 50%;
+    min-width: 50%;
     display: flex;
     justify-content: space-between;
 }
 
-.contribution.contribution:has(.contribution_percentage) span {
+.contribution:has(.contribution_percentage) span {
     margin: auto 0;
 }
 
