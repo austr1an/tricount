@@ -267,7 +267,7 @@ function renderContributions() {
             case "split":
                 contribution.innerText = checked
                     ? `${SYMBOL} ${(cost / totalContributors).toFixed(DECIMALS)}`
-                    : `${SYMBOL} 0.00`;
+                    : `${SYMBOL} ${(0).toFixed(DECIMALS)}`;
 
                 break;
 
@@ -632,7 +632,7 @@ function makeContributorView(id) {
         <input type="checkbox" id="iDynContrib_${id}" name="${id}" ${addMode ? "checked" : ""} />
         ${participants[id]}
     </div>
-    <p class="contribution">${SYMBOL} 0.00</p>
+    <p class="contribution">${SYMBOL} ${(0).toFixed(DECIMALS)}</p>
     `;
 
     iContributors.appendChild(label);
