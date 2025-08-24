@@ -70,6 +70,9 @@ function setSymbol() {
     renderBalances();
     renderContributions();
     save();
+
+    // Update selected entry
+    if (!addMode) document.getElementById("iDynEntry_" + editEntryId)?.classList.add("selected");
 }
 
 iSymbol.onkeyup = setSymbol;
